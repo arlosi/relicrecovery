@@ -50,7 +50,7 @@ p{
     font-size: 0.8em;
 }
 
-.mission, #looseitems{
+.mission{
     background-color: #fff;
     border: 1px solid #aaa;
     padding: 3px;
@@ -64,8 +64,8 @@ p{
     border: 1px solid #000;
     display: inline-block;
     cursor: pointer;
-    padding: 3px 5px;
-    margin: 3px;
+    padding: 3px 3px;
+    margin: 2px;
 }
 
 .mission ul > li.selected{
@@ -108,14 +108,14 @@ var missions = [
         "sections": [
             {
                 "text": "Jewels Scoring for Alliance",
-                "options": [0,1,2],
+                "options": [0,1,2,3,4],
                 "selected_option": 0,
                 "fn_score": function (option) {
                     return option * 30
                 }
             },
             {
-                "text": "Glyphs in Cryptobox",
+                "text": "Glyphs in Cryptobox 1",
                 "options": [0,1,2,3,4,5,6,7,8,9,10,11,12],
                 "selected_option": 0,
                 "fn_score": function (option) {
@@ -123,7 +123,15 @@ var missions = [
                 }
             },
             {
-                "text": "Cryptobox Key",
+                "text": "Glyphs in Cryptobox 2",
+                "options": [0,1,2,3,4,5,6,7,8,9,10,11,12],
+                "selected_option": 0,
+                "fn_score": function (option) {
+                    return option * 15
+                }
+            },
+            {
+                "text": "Cryptobox 1 Key",
                 "options": ["None", "Key Completed"],
                 "selected_option": "None",
                 "fn_score": function (option) {
@@ -134,7 +142,26 @@ var missions = [
                 }
             },
             {
-                "text": "Robot Parked",
+                "text": "Cryptobox 2 Key",
+                "options": ["None", "Key Completed"],
+                "selected_option": "None",
+                "fn_score": function (option) {
+                    return option != "None" ? 30 : 0
+                },
+                "fn_validate": function (option) {
+                    return option == "None" || getMission("Autonomous").sections[2].selected_option != "0"
+                }
+            },
+            {
+                "text": "Robot 1 Parked",
+                "options": ["Not Parked", "Parked"],
+                "selected_option": "Not Parked",
+                "fn_score": function (option) {
+                    return option != "Not Parked" ? 10 : 0
+                }
+            },
+            {
+                "text": "Robot 2 Parked",
                 "options": ["Not Parked", "Parked"],
                 "selected_option": "Not Parked",
                 "fn_score": function (option) {
@@ -144,10 +171,10 @@ var missions = [
         ]
     },
     {
-        "title": "Driver Controlled",
+        "title": "TeleOp",
         "sections": [
             {
-                "text": "Glyphs In Cryptobox",
+                "text": "Glyphs in Cryptobox 1",
                 "options": [0,1,2,3,4,5,6,7,8,9,10,11,12],
                 "selected_option": 0,
                 "fn_score": function (option) {
@@ -155,36 +182,77 @@ var missions = [
                 }
             },
             {
-                "text": "Completed rows of Glyphs",
+                "text": "Glyphs in Cryptobox 2",
+                "options": [0,1,2,3,4,5,6,7,8,9,10,11,12],
+                "selected_option": 0,
+                "fn_score": function (option) {
+                    return option * 2
+                }
+            },
+            {
+                "text": "Completed rows (box 1)",
                 "options": [0,1,2,3,4],
                 "selected_option": 0,
                 "fn_score": function (option) {
                     return option * 10
                 },
                 "fn_validate": function (option) {
-                    return getMission("Driver Controlled").sections[0].selected_option >= option * 3
+                    return getMission("TeleOp").sections[0].selected_option >= option * 3
                 }
             },
             {
-                "text": "Completed column of Glyphs",
+                "text": "Completed rows (box 2)",
+                "options": [0,1,2,3,4],
+                "selected_option": 0,
+                "fn_score": function (option) {
+                    return option * 10
+                },
+                "fn_validate": function (option) {
+                    return getMission("TeleOp").sections[1].selected_option >= option * 3
+                }
+            },
+            {
+                "text": "Completed columns (box 1)",
                 "options": [0,1,2,3],
                 "selected_option": 0,
                 "fn_score": function (option) {
                     return option * 20
                 },
                 "fn_validate": function (option) {
-                    return getMission("Driver Controlled").sections[0].selected_option >= option * 4
+                    return getMission("TeleOp").sections[0].selected_option >= option * 4
                 }
             },
             {
-                "text": "Cipher Status",
+                "text": "Completed columns (box 2)",
+                "options": [0,1,2,3],
+                "selected_option": 0,
+                "fn_score": function (option) {
+                    return option * 20
+                },
+                "fn_validate": function (option) {
+                    return getMission("TeleOp").sections[1].selected_option >= option * 4
+                }
+            },
+            {
+                "text": "Cipher 1 status",
                 "options": ["Not Completed", "Completed"],
                 "selected_option": "Not Completed",
                 "fn_score": function (option) {
                     return option == "Completed" ? 30 : 0
                 },
                 "fn_validate": function (option) {
-                    return option == "Not Completed" || getMission("Driver Controlled").sections[0].selected_option == "12"
+                    return option == "Not Completed" || getMission("TeleOp").sections[0].selected_option == "12"
+                }
+            },
+            {
+                "text": "Cipher 2 status",
+                "options": ["Not Completed", "Completed"],
+                "selected_option": "Not Completed",
+                "fn_score": function (option) {
+                    return option == "Completed" ? 30 : 0
+                },
+                "fn_validate": function (option) {
+                    return option == "Not Completed" || getMission("TeleOp").sections[1].selected_option == "12"
                 }
             }
         ]
@@ -193,7 +261,7 @@ var missions = [
         "title": "End Game",
         "sections": [
             {
-                "text": "Relic Location",
+                "text": "Relic 1 Location",
                 "options": ["None", "Zone 1", "Zone 2", "Zone 3"],
                 "selected_option": "None",
                 "fn_score": function (option) {
@@ -208,7 +276,22 @@ var missions = [
                 }
             },
             {
-                "text": "Relic Bonus",
+                "text": "Relic 2 Location",
+                "options": ["None", "Zone 1", "Zone 2", "Zone 3"],
+                "selected_option": "None",
+                "fn_score": function (option) {
+                    if (option == "Zone 1") {
+                        return 10
+                    } else if (option == "Zone 2"){
+                        return 20
+                    } else if (option == "Zone 3"){
+                        return 40
+                    }
+                    return 0
+                }
+            },
+            {
+                "text": "Relic 1 Bonus",
                 "options": ["No", "Upright"],
                 "selected_option": "No",
                 "fn_score": function (option) {
@@ -219,133 +302,26 @@ var missions = [
                 }
             },
             {
-                "text": "Robot Balanced on Stone.",
-                "options": ["No", "Yes"],
-                "selected_option": "No",
-                "fn_score": function (option) {
-                    return option == "Yes" ? 20 : 0
-                }
-            }
-        ]
-    },
-// DUPLICATE for team 2
-    {
-        "title": "Autonomous Partner",
-        "sections": [
-            {
-                "text": "Jewels Scoring for Alliance",
-                "options": [0,1,2],
-                "selected_option": 0,
-                "fn_score": function (option) {
-                    return option * 30
-                }
-            },
-            {
-                "text": "Glyphs in Cryptobox",
-                "options": [0,1,2,3,4,5,6,7,8,9,10,11,12],
-                "selected_option": 0,
-                "fn_score": function (option) {
-                    return option * 15
-                }
-            },
-            {
-                "text": "Cryptobox Key",
-                "options": ["None", "Key Completed"],
-                "selected_option": "None",
-                "fn_score": function (option) {
-                    return option != "None" ? 30 : 0
-                },
-                "fn_validate": function (option) {
-                    return option == "None" || getMission("Autonomous Partner").sections[1].selected_option != "0"
-                }
-            },
-            {
-                "text": "Robot Parked",
-                "options": ["Not Parked", "Parked"],
-                "selected_option": "Not Parked",
-                "fn_score": function (option) {
-                    return option != "Not Parked" ? 10 : 0
-                }
-            }
-        ]
-    },
-    {
-        "title": "Driver Controlled Partner",
-        "sections": [
-            {
-                "text": "Glyphs In Cryptobox",
-                "options": [0,1,2,3,4,5,6,7,8,9,10,11,12],
-                "selected_option": 0,
-                "fn_score": function (option) {
-                    return option * 2
-                }
-            },
-            {
-                "text": "Completed rows of Glyphs",
-                "options": [0,1,2,3,4],
-                "selected_option": 0,
-                "fn_score": function (option) {
-                    return option * 10
-                },
-                "fn_validate": function (option) {
-                    return getMission("Driver Controlled Partner").sections[0].selected_option >= option * 3
-                }
-            },
-            {
-                "text": "Completed column of Glyphs",
-                "options": [0,1,2,3],
-                "selected_option": 0,
-                "fn_score": function (option) {
-                    return option * 20
-                },
-                "fn_validate": function (option) {
-                    return getMission("Driver Controlled Partner").sections[0].selected_option >= option * 4
-                }
-            },
-            {
-                "text": "Cipher Status",
-                "options": ["Not Completed", "Completed"],
-                "selected_option": "Not Completed",
-                "fn_score": function (option) {
-                    return option == "Completed" ? 30 : 0
-                },
-                "fn_validate": function (option) {
-                    return option == "Not Completed" || getMission("Driver Controlled Partner").sections[0].selected_option == "12"
-                }
-            }
-        ]
-    },
-    {
-        "title": "End Game Partner",
-        "sections": [
-            {
-                "text": "Relic Location",
-                "options": ["None", "Zone 1", "Zone 2", "Zone 3"],
-                "selected_option": "None",
-                "fn_score": function (option) {
-                    if (option == "Zone 1") {
-                        return 10
-                    } else if (option == "Zone 2"){
-                        return 20
-                    } else if (option == "Zone 3"){
-                        return 40
-                    }
-                    return 0
-                }
-            },
-            {
-                "text": "Relic Bonus",
+                "text": "Relic 2 Bonus",
                 "options": ["No", "Upright"],
                 "selected_option": "No",
                 "fn_score": function (option) {
                     return option == "Upright" ? 15 : 0
                 },
                 "fn_validate": function (option) {
-                    return option == "No" || getMission("End Game Partner").sections[0].selected_option != "None"
+                    return option == "No" || getMission("End Game").sections[1].selected_option != "None"
                 }
             },
             {
-                "text": "Robot Balanced on Stone.",
+                "text": "Robot 1 Balanced on Stone",
+                "options": ["No", "Yes"],
+                "selected_option": "No",
+                "fn_score": function (option) {
+                    return option == "Yes" ? 20 : 0
+                }
+            },
+            {
+                "text": "Robot 2 Balanced on Stone",
                 "options": ["No", "Yes"],
                 "selected_option": "No",
                 "fn_score": function (option) {

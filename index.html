@@ -1,0 +1,459 @@
+<!doctype html>
+<html>
+<head>
+    <title>FTC Relic Recovery Scoresheet</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type="text/css">
+@media screen and (min-width: 1200px) {
+    #content{ column-count: 2;}
+}
+
+@media screen and (min-width: 1600px) {
+    #content{ column-count: 3;}
+}
+
+body{
+    font-family: sans-serif;
+}
+
+p{
+    margin:0;
+}
+
+#header{
+    top:0;
+    right:0;
+    left:0;
+    position: fixed;
+    height: 30px;
+    background-color: #ddd;
+    padding: 5px 10px;
+}
+
+#header h1{
+    margin: 0;
+    font-size: 22px;
+}
+
+#headerright{
+    float:right;
+}
+
+#content{
+    margin-top: 50px;
+}
+
+#about{
+    text-align: center;
+    padding: 2em;
+    font-size: 0.8em;
+}
+
+.mission, #looseitems{
+    background-color: #fff;
+    border: 1px solid #aaa;
+    padding: 3px;
+    margin-bottom: 5px;
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+.mission ul > li{
+    border: 1px solid #000;
+    display: inline-block;
+    cursor: pointer;
+    padding: 3px 5px;
+    margin: 3px;
+}
+
+.mission ul > li.selected{
+    background-color: lawngreen;
+}
+
+.mission ul {
+    float: right;
+    margin: 0;
+    padding: 0 5px;
+}
+
+.mission > div > div {
+    min-height: 2em;
+    padding: 1px;
+    margin-top: 5px;
+}
+
+h2 {
+    margin: 0;
+}
+
+.score{
+    float: right;
+}
+
+.invalid{
+    background-color: #f55;
+}
+
+.note{
+    color: #090;
+}
+    </style>
+
+    <script>
+var missions = [
+    {
+        "title": "Autonomous",
+        "sections": [
+            {
+                "text": "Jewels Scoring for Alliance",
+                "options": [0,1,2],
+                "selected_option": 0,
+                "fn_score": function (option) {
+                    return option * 30
+                }
+            },
+            {
+                "text": "Glyphs in Cryptobox",
+                "options": [0,1,2,3,4,5,6,7,8,9,10,11,12],
+                "selected_option": 0,
+                "fn_score": function (option) {
+                    return option * 15
+                }
+            },
+            {
+                "text": "Cryptobox Key",
+                "options": ["None", "Key Completed"],
+                "selected_option": "None",
+                "fn_score": function (option) {
+                    return option != "None" ? 30 : 0
+                },
+                "fn_validate": function (option) {
+                    return option == "None" || getMission("Autonomous").sections[1].selected_option != "0"
+                }
+            },
+            {
+                "text": "Robot Parked",
+                "options": ["Not Parked", "Parked"],
+                "selected_option": "Not Parked",
+                "fn_score": function (option) {
+                    return option != "Not Parked" ? 10 : 0
+                }
+            }
+        ]
+    },
+    {
+        "title": "Driver Controlled",
+        "sections": [
+            {
+                "text": "Glyphs In Cryptobox",
+                "options": [0,1,2,3,4,5,6,7,8,9,10,11,12],
+                "selected_option": 0,
+                "fn_score": function (option) {
+                    return option * 2
+                }
+            },
+            {
+                "text": "Completed rows of Glyphs",
+                "options": [0,1,2,3,4],
+                "selected_option": 0,
+                "fn_score": function (option) {
+                    return option * 10
+                },
+                "fn_validate": function (option) {
+                    return getMission("Driver Controlled").sections[0].selected_option >= option * 3
+                }
+            },
+            {
+                "text": "Completed column of Glyphs",
+                "options": [0,1,2,3],
+                "selected_option": 0,
+                "fn_score": function (option) {
+                    return option * 20
+                },
+                "fn_validate": function (option) {
+                    return getMission("Driver Controlled").sections[0].selected_option >= option * 4
+                }
+            },
+            {
+                "text": "Cipher Status",
+                "options": ["Not Completed", "Completed"],
+                "selected_option": "Not Completed",
+                "fn_score": function (option) {
+                    return option == "Completed" ? 30 : 0
+                },
+                "fn_validate": function (option) {
+                    return option == "Not Completed" || getMission("Driver Controlled").sections[0].selected_option == "12"
+                }
+            }
+        ]
+    },
+    {
+        "title": "End Game",
+        "sections": [
+            {
+                "text": "Relic Location",
+                "options": ["None", "Zone 1", "Zone 2", "Zone 3"],
+                "selected_option": "None",
+                "fn_score": function (option) {
+                    if (option == "Zone 1") {
+                        return 10
+                    } else if (option == "Zone 2"){
+                        return 20
+                    } else if (option == "Zone 3"){
+                        return 40
+                    }
+                    return 0
+                }
+            },
+            {
+                "text": "Relic Bonus",
+                "options": ["No", "Upright"],
+                "selected_option": "No",
+                "fn_score": function (option) {
+                    return option == "Upright" ? 15 : 0
+                },
+                "fn_validate": function (option) {
+                    return option == "No" || getMission("End Game").sections[0].selected_option != "None"
+                }
+            },
+            {
+                "text": "Robot Balanced on Stone.",
+                "options": ["No", "Yes"],
+                "selected_option": "No",
+                "fn_score": function (option) {
+                    return option == "Yes" ? 20 : 0
+                }
+            }
+        ]
+    },
+// DUPLICATE for team 2
+    {
+        "title": "Autonomous Partner",
+        "sections": [
+            {
+                "text": "Jewels Scoring for Alliance",
+                "options": [0,1,2],
+                "selected_option": 0,
+                "fn_score": function (option) {
+                    return option * 30
+                }
+            },
+            {
+                "text": "Glyphs in Cryptobox",
+                "options": [0,1,2,3,4,5,6,7,8,9,10,11,12],
+                "selected_option": 0,
+                "fn_score": function (option) {
+                    return option * 15
+                }
+            },
+            {
+                "text": "Cryptobox Key",
+                "options": ["None", "Key Completed"],
+                "selected_option": "None",
+                "fn_score": function (option) {
+                    return option != "None" ? 30 : 0
+                },
+                "fn_validate": function (option) {
+                    return option == "None" || getMission("Autonomous Partner").sections[1].selected_option != "0"
+                }
+            },
+            {
+                "text": "Robot Parked",
+                "options": ["Not Parked", "Parked"],
+                "selected_option": "Not Parked",
+                "fn_score": function (option) {
+                    return option != "Not Parked" ? 10 : 0
+                }
+            }
+        ]
+    },
+    {
+        "title": "Driver Controlled Partner",
+        "sections": [
+            {
+                "text": "Glyphs In Cryptobox",
+                "options": [0,1,2,3,4,5,6,7,8,9,10,11,12],
+                "selected_option": 0,
+                "fn_score": function (option) {
+                    return option * 2
+                }
+            },
+            {
+                "text": "Completed rows of Glyphs",
+                "options": [0,1,2,3,4],
+                "selected_option": 0,
+                "fn_score": function (option) {
+                    return option * 10
+                },
+                "fn_validate": function (option) {
+                    return getMission("Driver Controlled Partner").sections[0].selected_option >= option * 3
+                }
+            },
+            {
+                "text": "Completed column of Glyphs",
+                "options": [0,1,2,3],
+                "selected_option": 0,
+                "fn_score": function (option) {
+                    return option * 20
+                },
+                "fn_validate": function (option) {
+                    return getMission("Driver Controlled Partner").sections[0].selected_option >= option * 4
+                }
+            },
+            {
+                "text": "Cipher Status",
+                "options": ["Not Completed", "Completed"],
+                "selected_option": "Not Completed",
+                "fn_score": function (option) {
+                    return option == "Completed" ? 30 : 0
+                },
+                "fn_validate": function (option) {
+                    return option == "Not Completed" || getMission("Driver Controlled Partner").sections[0].selected_option == "12"
+                }
+            }
+        ]
+    },
+    {
+        "title": "End Game Partner",
+        "sections": [
+            {
+                "text": "Relic Location",
+                "options": ["None", "Zone 1", "Zone 2", "Zone 3"],
+                "selected_option": "None",
+                "fn_score": function (option) {
+                    if (option == "Zone 1") {
+                        return 10
+                    } else if (option == "Zone 2"){
+                        return 20
+                    } else if (option == "Zone 3"){
+                        return 40
+                    }
+                    return 0
+                }
+            },
+            {
+                "text": "Relic Bonus",
+                "options": ["No", "Upright"],
+                "selected_option": "No",
+                "fn_score": function (option) {
+                    return option == "Upright" ? 15 : 0
+                },
+                "fn_validate": function (option) {
+                    return option == "No" || getMission("End Game Partner").sections[0].selected_option != "None"
+                }
+            },
+            {
+                "text": "Robot Balanced on Stone.",
+                "options": ["No", "Yes"],
+                "selected_option": "No",
+                "fn_score": function (option) {
+                    return option == "Yes" ? 20 : 0
+                }
+            }
+        ]
+    }
+]
+
+function getMission(name){
+    for(var mission_id in missions){
+        if (missions[mission_id].title == name) {
+            return missions[mission_id]
+        }
+    }
+}
+
+// Generate the page, based on the mission data.
+function load(){
+    var missions_element = document.getElementById("missions");
+    missions_element.innerHTML = ''
+
+    missions.points = 0
+    missions.forEach(function(mission){
+        var title_element = document.createElement("h2")
+        var score_element = document.createElement("span")
+        title_element.appendChild(score_element)
+        score_element.className = "score"
+        title_element.appendChild(document.createTextNode(mission.title))
+
+        var mission_element = document.createElement("div")
+        mission_element.className = "mission"
+        mission_element.appendChild(title_element);
+        sections_element = document.createElement("div")
+
+        mission.points = 0
+
+        mission.sections.forEach(function (section){
+            var section_element = document.createElement("div")
+            var options_element = document.createElement("ul")
+            
+            section.options.forEach(function(option){
+                var option_element = document.createElement("li")
+                option_element.textContent = option
+                if (section.selected_option == option) {
+                    option_element.className = "selected"
+                }
+
+                option_element.addEventListener("click", function(){
+                    section.selected_option = this.textContent
+                    load()
+                })
+
+                options_element.appendChild(option_element)
+            })
+
+            section.points = section.fn_score(section.selected_option)
+            if (section.fn_validate != null) {
+                if (section.fn_validate(section.selected_option)) {
+                    section_element.className = ""
+                } else {
+                    section_element.className = "invalid"
+                    section.points = NaN
+                }
+            }
+
+            section_element.appendChild(options_element)
+
+            var text_element = document.createElement("p")
+            text_element.textContent = section.text
+            section_element.appendChild(text_element)
+            sections_element.appendChild(section_element)
+
+            mission.points += section.points
+        })
+        missions.points += mission.points
+        
+        score_element.textContent = mission.points
+        if (mission.notes != null) {
+            var notes_element = document.createElement("p")
+            notes_element.className = "note"
+            notes_element.textContent = mission.notes
+            mission_element.appendChild(notes_element)
+        }   
+        mission_element.appendChild(sections_element)
+        missions_element.appendChild(mission_element)
+    })
+
+    document.getElementById("totalscore").textContent = missions.points
+}
+    </script>
+</head>
+<body onload="load()">
+    <div id="header">
+        <h1><span style="color: #092e6b">Relic</span><span style="color: #890000">Recovery</span><span id="headerright"><span id="totalscore">0</span> Pts</span></h1>
+    </div>
+    <div id="content">
+        <div id="missions"></div>
+    </div>
+    <div id="about">
+        <p>Created by Arlo Siemsen | Refresh to reset | Last updated August 30th, 2017.</p>
+        <p>
+            <a href="https://firstinspiresst01.blob.core.windows.net/fll/hydro-dynamics-challenge-letter.pdf">Challenge PDF</a> |
+            <a href="https://firstinspiresst01.blob.core.windows.net/fll/hydro-dynamics-graphical-score-sheet.pdf">Score sheet PDF</a> |
+            <a href="https://github.com/arlosi/relicrecovery">Feedback and PRs</a>
+        </p>
+    </div>
+</body>
+</html>
+
